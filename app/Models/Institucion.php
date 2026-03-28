@@ -7,6 +7,8 @@ use Illuminate\Support\Str;
 
 class Institucion extends Model
 {
+    protected $table = 'instituciones';
+
     protected $keyType = 'string';
     public $incrementing = false;
     public $timestamps = false;
