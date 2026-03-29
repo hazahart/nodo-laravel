@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/chain', [BlockchainController::class, 'chain']);
 Route::post('/mine', [BlockchainController::class, 'mine']);
 Route::get('/nodes/resolve', [BlockchainController::class, 'resolve']);
-Route::post('/bloques/recibir', [BlockchainController::class, 'recibirBloque']);
+Route::post('/blocks/receive', [BlockchainController::class, 'recibirBloque']);
 
 Route::post('/transactions', [TransactionController::class, 'store']);
 Route::get('/transactions', [TransactionController::class, 'index']);
