@@ -17,20 +17,19 @@ class NodeService
             try {
                 Http::timeout(5)->post("{$nodo->url}/api/transactions", $datos);
                 Log::info('[Node] Transacción propagada', ['nodo' => $nodo->url]);
+                EventLogger::log('propagacion', "Propagado a {$nodo->url}", [
+                    'nodo' => $nodo->nombre ?? $nodo->url,
+                ]);
             } catch (\Exception $e) {
                 Log::error('[Node] Error propagando transacción', [
                     'nodo' => $nodo->url,
                     'error' => $e->getMessage(),
                 ]);
+                EventLogger::log('error', "Error propagando a {$nodo->url}", [
+                    'error' => $e->getMessage(),
+                ]);
             }
         }
-        EventLogger::log('propagacion', "Propagado a {$nodo->url}", [
-            'nodo' => $nodo->nombre ?? $nodo->url,
-        ]);
-
-        EventLogger::log('error', "Error propagando a {$nodo->url}", [
-            'error' => $e->getMessage(),
-        ]);
     }
 
     public function propagarBloque(array $bloque): void

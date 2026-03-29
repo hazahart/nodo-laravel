@@ -25,7 +25,7 @@ class Programa extends Model
 
     public function nivelGrado()
     {
-        return $this->belongsTo(NivelGrado::class);
+        return $this->belongsTo(NivelesGrado::class);
     }
 
     public function grados()

@@ -95,15 +95,15 @@ class BlockchainController extends Controller
             'hash' => $datos['hash_actual'],
         ]);
 
-        return response()->json([
-            'mensaje' => 'Bloque aceptado y agregado a la cadena',
-        ], 201);
-
         EventLogger::log('bloque_recibido', 'Bloque recibido y validado', [
             'hash' => substr($datos['hash_actual'], 0, 16) . '...',
         ]);
 
         // Cuando rechaza:
         EventLogger::log('error', 'Bloque inválido rechazado', []);
+
+        return response()->json([
+            'mensaje' => 'Bloque aceptado y agregado a la cadena',
+        ], 201);
     }
 }
