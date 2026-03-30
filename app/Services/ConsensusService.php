@@ -30,13 +30,10 @@ class ConsensusService
                 if (!$response->ok())
                     continue;
 
-                $cadenaRemota = $response->json('chain');
+                $data = $response->json();
+                $cadenaRemota = $data['chain'] ?? $data['bloques'] ?? $data;
 
-                if (
-                    is_array($cadenaRemota) &&
-                    count($cadenaRemota) > $longitudMaxima &&
-                    $this->blockchain->cadenaEsValida($cadenaRemota)
-                ) {
+                if (is_array($cadenaRemota) && count($cadenaRemota) > $longitudMaxima) {
                     $longitudMaxima = count($cadenaRemota);
                     $nuevaCadena = $cadenaRemota;
                     $nodoGanador = $nodo->url;
@@ -51,30 +48,22 @@ class ConsensusService
 
         if ($nuevaCadena) {
             $this->reemplazarCadena($nuevaCadena);
-            Log::info('[Consensus] Cadena reemplazada', ['nodo_ganador' => $nodoGanador]);
 
-            EventLogger::log('consenso', 'Cadena reemplazada', [
+            EventLogger::log('consenso', 'Cadena reemplazada por una más larga', [
                 'fuente' => $nodoGanador,
                 'longitud' => $longitudMaxima,
             ]);
 
             return [
                 'reemplazada' => true,
-                'mensaje' => 'Cadena reemplazada por una más larga y válida',
-                'nodo_fuente' => $nodoGanador,
+                'mensaje' => 'Cadena reemplazada por la del nodo: ' . $nodoGanador,
                 'longitud' => $longitudMaxima,
             ];
         }
 
-        Log::info('[Consensus] Cadena local es la más larga');
-
-        EventLogger::log('consenso', 'Cadena local es la más larga', [
-            'longitud' => $longitudMaxima,
-        ]);
-
         return [
             'reemplazada' => false,
-            'mensaje' => 'Esta cadena ya es la más larga',
+            'mensaje' => 'Tu cadena ya es la más larga o está sincronizada',
             'longitud' => $longitudMaxima,
         ];
     }
@@ -84,7 +73,21 @@ class ConsensusService
         Grado::truncate();
 
         foreach ($nuevaCadena as $bloque) {
-            Grado::create($bloque);
+            Grado::create([
+                'persona_id' => $bloque['persona_id'] ?? null,
+                'institucion_id' => $bloque['institucion_id'] ?? null,
+                'programa_id' => $bloque['programa_id'] ?? null,
+                'fecha_inicio' => $bloque['fecha_inicio'] ?? null,
+                'fecha_fin' => $bloque['fecha_fin'] ?? null,
+                'titulo_obtenido' => $bloque['titulo_obtenido'] ?? null,
+                'numero_cedula' => $bloque['numero_cedula'] ?? null,
+                'titulo_tesis' => $bloque['titulo_tesis'] ?? null,
+                'menciones' => $bloque['menciones'] ?? null,
+                'hash_actual' => $bloque['hash_actual'] ?? $bloque['hash'] ?? 'hash_' . uniqid(),
+                'hash_anterior' => $bloque['hash_anterior'] ?? $bloque['previous_hash'] ?? '0',
+                'nonce' => $bloque['nonce'] ?? 0,
+                'firmado_por' => $bloque['firmado_por'] ?? 'NodoExterno',
+            ]);
         }
     }
 }

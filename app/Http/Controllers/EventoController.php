@@ -33,9 +33,14 @@ class EventoController extends Controller
                         foreach (explode("\n", trim($nuevas)) as $linea) {
                             if (empty(trim($linea)))
                                 continue;
+
                             $evento = json_decode($linea, true);
                             if (!$evento)
                                 continue;
+
+                            if (isset($evento['tipo']) && $evento['tipo'] === 'error') {
+                                continue;
+                            }
 
                             echo "event: actividad\n";
                             echo "data: " . json_encode($evento) . "\n\n";

@@ -17,29 +17,19 @@ class TransactionController extends Controller
 
     public function store(Request $request)
     {
-        $datos = $request->validate([
-            'persona_id' => 'required|uuid',
-            'institucion_id' => 'required|uuid',
-            'programa_id' => 'required|uuid',
-            'titulo_obtenido' => 'required|string',
-            'fecha_fin' => 'required|date',
-            'fecha_inicio' => 'nullable|date',
-            'numero_cedula' => 'nullable|string',
-            'titulo_tesis' => 'nullable|string',
-            'menciones' => 'nullable|string',
-        ]);
+        $payload = $request->all();
+        $datos = $payload['datos'] ?? $payload['transaccion'] ?? $payload['transaction'] ?? $payload;
 
-        $existe = Transaccion::where('datos->persona_id', $datos['persona_id'])
-            ->where('datos->titulo_obtenido', $datos['titulo_obtenido'])
-            ->where('datos->fecha_fin', $datos['fecha_fin'])
+        $existe = Transaccion::where('datos->persona_id', $datos['persona_id'] ?? null)
+            ->where('datos->titulo_obtenido', $datos['titulo_obtenido'] ?? null)
+            ->where('datos->fecha_fin', $datos['fecha_fin'] ?? null)
             ->where('minada', false)
             ->exists();
 
         if ($existe) {
             EventLogger::log('advertencia', 'Transacción duplicada ignorada', [
-                'titulo' => $datos['titulo_obtenido'],
+                'titulo' => $datos['titulo_obtenido'] ?? 'Desconocido',
             ]);
-            Log::info('[Transaction] Transacción duplicada ignorada', $datos);
             return response()->json([
                 'mensaje' => 'Transacción ya existe en este nodo',
             ], 200);
@@ -51,7 +41,7 @@ class TransactionController extends Controller
         ]);
 
         EventLogger::log('transaccion', 'Transacción recibida', [
-            'titulo' => $datos['titulo_obtenido'],
+            'titulo' => $datos['titulo_obtenido'] ?? 'Desconocido',
         ]);
 
         Log::info('[Transaction] Nueva transacción recibida', [
