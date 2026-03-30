@@ -38,7 +38,7 @@ class NodeService
 
         foreach ($nodos as $nodo) {
             try {
-                Http::timeout(5)->post("{$nodo->url}/api/bloques/recibir", $bloque);
+                Http::timeout(5)->post("{$nodo->url}/api/blocks/receive", $bloque);
                 Log::info('[Node] Bloque propagado', ['nodo' => $nodo->url]);
             } catch (\Exception $e) {
                 Log::error('[Node] Error propagando bloque', [

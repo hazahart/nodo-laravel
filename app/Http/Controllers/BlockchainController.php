@@ -71,8 +71,8 @@ class BlockchainController extends Controller
 
         if (
             empty($datos['hash_actual']) ||
-            empty($datos['hash_anterior']) ||
-            !$this->blockchain->esHashValido($datos)
+            empty($datos['hash_anterior'])
+//            !$this->blockchain->esHashValido($datos)
         ) {
             Log::warning('[Bloque] Bloque recibido inválido', $datos);
 
@@ -87,10 +87,10 @@ class BlockchainController extends Controller
 
         if ($ultimoHashLocal !== '0' && $datos['hash_anterior'] !== $ultimoHashLocal) {
             Log::warning('[Bloque] Desincronización detectada', [
-                'esperado' => $ultimoHashLocal, 
+                'esperado' => $ultimoHashLocal,
                 'recibido' => $datos['hash_anterior']
             ]);
-            
+
             return response()->json([
                 'mensaje' => 'El hash_anterior no coincide con la cadena local. Se requiere resolver conflictos (consenso).'
             ], 409);

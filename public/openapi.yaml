@@ -34,7 +34,7 @@ paths:
       responses:
         '200':
           description: Resultado del proceso de minado
-  /bloques/recibir:
+  /blocks/receive:
     post:
       summary: Recibir y validar un bloque de otro nodo
       tags:

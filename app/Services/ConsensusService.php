@@ -53,6 +53,11 @@ class ConsensusService
             $this->reemplazarCadena($nuevaCadena);
             Log::info('[Consensus] Cadena reemplazada', ['nodo_ganador' => $nodoGanador]);
 
+            EventLogger::log('consenso', 'Cadena reemplazada', [
+                'fuente' => $nodoGanador,
+                'longitud' => $longitudMaxima,
+            ]);
+
             return [
                 'reemplazada' => true,
                 'mensaje' => 'Cadena reemplazada por una más larga y válida',
@@ -62,11 +67,6 @@ class ConsensusService
         }
 
         Log::info('[Consensus] Cadena local es la más larga');
-
-        EventLogger::log('consenso', 'Cadena reemplazada', [
-            'fuente' => $nodoGanador,
-            'longitud' => $longitudMaxima,
-        ]);
 
         EventLogger::log('consenso', 'Cadena local es la más larga', [
             'longitud' => $longitudMaxima,

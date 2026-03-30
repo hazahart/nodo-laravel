@@ -16,6 +16,7 @@ Route::get('/nodes/resolve', [BlockchainController::class, 'resolve']);
 Route::post('/blocks/receive', [BlockchainController::class, 'recibirBloque']);
 
 Route::post('/transactions', [TransactionController::class, 'store']);
+Route::post('/transactions/receive', [TransactionController::class, 'store']);
 Route::get('/transactions', [TransactionController::class, 'index']);
 
 Route::post('/nodes/register', [NodeController::class, 'register']);
